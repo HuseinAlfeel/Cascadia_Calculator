@@ -3,563 +3,1760 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cascadia FeZoRaHuNu Calculator</title>
+    <title>Cascadia Score Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a, #2d5016);
-            color: white;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0f1f;
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #a7f3d0;
+            --amber: #f59e0b;
+            --amber-light: #fde68a;
+            --yellow: #fbbf24;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --slate: #64748b;
+            --slate-light: #94a3b8;
+            --slate-dark: #475569;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+            color: white;
             min-height: 100vh;
+            padding: 1rem;
+            line-height: 1.6;
         }
-        
+
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid #4ade80;
         }
-        
-        .title {
+
+        .app-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(10, 15, 31, 0.95));
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .header {
             text-align: center;
+            padding: 2.5rem;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            background: rgba(10, 15, 31, 0.4);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-icon {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .app-title {
             font-size: 2.5rem;
-            color: #4ade80;
-            margin-bottom: 10px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
         }
-        
-        .subtitle {
-            text-align: center;
-            color: #94a3b8;
-            margin-bottom: 30px;
+
+        .app-subtitle {
+            color: var(--primary-light);
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
-        
+
         .section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 10px;
-            border: 1px solid #334155;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
         }
-        
+
         .section-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-light);
+        }
+
+        .section-icon {
+            background: rgba(16, 185, 129, 0.15);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.5rem;
-            color: #fbbf24;
-            margin-bottom: 15px;
         }
-        
-        .row {
+
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .section-subheading {
+            color: var(--primary-light);
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        .grid-cols-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .input-group {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(51, 65, 85, 0.5);
-            border-radius: 8px;
+            flex-direction: column;
+            gap: 0.5rem;
         }
-        
-        .animal {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
+
+        .input-label {
+            color: var(--primary-light);
+            font-size: 0.9rem;
+            font-weight: 500;
         }
-        
-        .inputs {
-            display: flex;
-            gap: 15px;
+
+        select, input {
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
         }
-        
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
         .player-input {
             display: flex;
             flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .scoring-card {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 1rem;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .scoring-header {
+            padding: 1.25rem;
+        }
+
+        .scoring-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .animal-header {
+            display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
-        
-        .player-name {
-            font-size: 0.8rem;
-            color: #94a3b8;
+
+        .animal-emoji {
+            font-size: 1.8rem;
         }
-        
-        input {
-            width: 60px;
-            padding: 8px;
+
+        .animal-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--amber-light);
+        }
+
+        .help-btn {
+            background: none;
+            border: none;
+            color: var(--amber);
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: auto;
+        }
+
+        .animal-description {
+            color: var(--slate-light);
+            font-size: 0.9rem;
+        }
+
+        .score-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .player-score {
             text-align: center;
-            border: 2px solid #4ade80;
-            border-radius: 5px;
-            background: rgba(15, 23, 42, 0.8);
+            min-width: 100px;
+        }
+
+        .player-name {
+            font-size: 0.85rem;
+            color: var(--slate-light);
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .score-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .score-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 0.5rem;
+            color: var(--amber);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .score-btn:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--amber);
+        }
+
+        .score-input {
+            width: 60px;
+            padding: 0.5rem;
+            text-align: center;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 0.5rem;
             color: white;
             font-size: 1rem;
+            font-weight: 600;
         }
-        
-        .results {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.3));
-            border: 2px solid #3b82f6;
-            border-radius: 15px;
-            padding: 25px;
+
+        .score-warning {
+            color: var(--red);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            height: 1rem;
         }
-        
-        .result-row {
+
+        .help-content {
+            padding: 1rem;
+            margin-top: 1rem;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .help-text {
+            color: var(--amber-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .help-examples {
+            color: var(--amber);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .subtotal-card {
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 1rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            background: rgba(30, 41, 59, 0.8);
         }
-        
-        .winner {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(249, 115, 22, 0.3));
-            border: 2px solid #fbbf24;
+
+        .subtotal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--amber-light);
         }
-        
-        .rank {
+
+        .subtotal-values {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .subtotal-player {
+            text-align: center;
+        }
+
+        .subtotal-label {
+            font-size: 0.9rem;
+            color: var(--slate-light);
+        }
+
+        .subtotal-value {
             font-size: 1.5rem;
-            margin-right: 15px;
+            font-weight: 700;
+            color: var(--amber);
         }
-        
-        .score {
+
+        .habitat-card {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 1rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .habitat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .habitat-emoji {
             font-size: 1.8rem;
-            font-weight: bold;
-            color: #3b82f6;
         }
-        
-        .winner .score {
-            color: #fbbf24;
+
+        .habitat-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-light);
         }
-        
+
+        .habitat-description {
+            color: var(--slate-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bonus-indicator {
+            color: var(--primary);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .results-card {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .trophy-icon {
+            font-size: 2rem;
+            color: var(--yellow);
+        }
+
         .celebrate-btn {
-            background: linear-gradient(to right, #eab308, #f97316);
-            color: black;
-            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(90deg, var(--yellow), var(--amber));
             border: none;
-            border-radius: 10px;
-            font-weight: bold;
+            border-radius: 0.75rem;
+            color: black;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .celebrate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-result {
+            padding: 1.25rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .winner {
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+            border: 1px solid rgba(251, 191, 36, 0.5);
+        }
+
+        .result-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .result-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .result-rank {
+            font-size: 1.5rem;
+            font-weight: 700;
+            min-width: 40px;
+        }
+
+        .rank-1 {
+            color: var(--yellow);
+        }
+
+        .rank-2 {
+            color: var(--slate-light);
+        }
+
+        .rank-3 {
+            color: var(--amber);
+        }
+
+        .result-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .winner .result-name {
+            color: var(--yellow);
+        }
+
+        .result-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--slate-light);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .result-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .result-tag.ascended {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple);
+        }
+
+        .result-tag.elite {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--yellow);
+        }
+
+        .result-tag.excellent {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--blue);
+        }
+
+        .result-tag.very-good {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary);
+        }
+
+        .result-tag.getting-it {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--amber);
+        }
+
+        .result-tag.good-start {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--slate-light);
+        }
+
+        .result-tag.keep-trying {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        .result-score {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .winner .result-score {
+            color: var(--yellow);
+        }
+
+        .reset-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 2rem auto;
+            padding: 1rem 2rem;
+            background: linear-gradient(90deg, var(--red), #b91c1c);
+            border: none;
+            border-radius: 0.75rem;
+            color: white;
+            font-weight: 600;
             font-size: 1.1rem;
             cursor: pointer;
-            margin: 20px auto;
-            display: block;
+            transition: all 0.3s;
         }
-        
-        .celebrate-btn:hover {
-            transform: scale(1.05);
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
-        
-        .reset-btn {
-            background: linear-gradient(to right, #dc2626, #b91c1c);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 20px auto;
-            display: block;
+
+        .footer {
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(16, 185, 129, 0.2);
         }
-        
-        .modal {
+
+        .footer-text {
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-note {
+            color: var(--slate-light);
+            font-size: 0.9rem;
+        }
+
+        /* Celebration Modal */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.95), rgba(37, 99, 235, 0.95), rgba(124, 58, 237, 0.95));
+            backdrop-filter: blur(10px);
             z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 2rem;
         }
-        
+
         .modal-content {
-            background: linear-gradient(135deg, #22c55e, #3b82f6);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(10, 15, 31, 0.9));
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            border: 2px solid rgba(251, 191, 36, 0.8);
+            padding: 2rem;
             max-width: 500px;
-            border: 3px solid #fbbf24;
+            width: 100%;
             position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
-        
+
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 20px;
-            background: none;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
             border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            font-size: 2rem;
+            font-size: 1.2rem;
             cursor: pointer;
         }
-        
-        .celebration-title {
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-trophy {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--yellow);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--yellow), var(--amber));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-winner {
+            font-size: 1.2rem;
+            color: var(--yellow);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-stats {
+            color: var(--blue);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .animal-cell {
+            text-align: center;
+        }
+
+        .animal-icon {
             font-size: 2.5rem;
-            font-weight: bold;
-            color: #fbbf24;
-            margin-bottom: 15px;
+            margin-bottom: 0.25rem;
         }
-        
-        .animals-row {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            font-size: 2rem;
-            margin: 20px 0;
+
+        .animal-message {
+            font-size: 0.85rem;
+            color: var(--yellow);
+            font-weight: 600;
         }
-        
+
+        .champion-badge {
+            background: linear-gradient(90deg, var(--yellow), var(--amber));
+            color: black;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin: 1.5rem auto;
+            max-width: 250px;
+        }
+
+        /* Animations */
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0, -30px, 0); }
+            70% { transform: translate3d(0, -15px, 0); }
+            90% { transform: translate3d(0, -4px, 0); }
+        }
+
+        @keyframes wiggle {
+            0%, 7% { transform: rotateZ(0); }
+            15% { transform: rotateZ(-15deg); }
+            20% { transform: rotateZ(10deg); }
+            25% { transform: rotateZ(-10deg); }
+            30% { transform: rotateZ(6deg); }
+            35% { transform: rotateZ(-4deg); }
+            40%, 100% { transform: rotateZ(0); }
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateY(-100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .celebrate-bounce { animation: bounce 2s infinite; }
+        .celebrate-wiggle { animation: wiggle 2s infinite; }
+        .celebrate-float { animation: float 3s ease-in-out infinite; }
+        .celebrate-pulse { animation: pulse 1.5s ease-in-out infinite; }
+        .celebrate-sparkle { animation: sparkle 2s linear infinite; }
+        .celebrate-confetti { animation: confetti 3s linear infinite; }
+        .celebrate-slide-in { animation: slideIn 0.8s ease-out forwards; }
+
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
         
-        .bounce {
-            animation: bounce 2s infinite;
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .subtotal-values {
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .celebrate-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">🌲 Cascadia FeZoRaHuNu Calculator 🦌</h1>
-        <p class="subtitle">Epic Professional Score Calculator!</p>
-        
-        <!-- Wildlife Section -->
-        <div class="section">
-            <h2 class="section-title">🦌 Wildlife Scoring</h2>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🐻</span>
-                    <span>Bear</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="bear-0" min="0" value="0" onchange="updateScores()">
+        <div class="app-card">
+            <div class="header">
+                <div class="header-content">
+                    <div class="header-icon">
+                        <i class="fas fa-mountain"></i>
                     </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="bear-1" min="0" value="0" onchange="updateScores()">
+                    <h1 class="app-title">Cascadia FeZoRaHuNu Calculator</h1>
+                    <div class="header-icon">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                </div>
+                <p class="app-subtitle">Epic Professional Score Calculator with Victory Ceremonies!</p>
+            </div>
+            
+            <div class="section">
+                <div class="grid-cols-2">
+                    <div class="input-group">
+                        <label class="input-label">Wildlife Cards Type</label>
+                        <select id="game-type">
+                            <option value="A">Type A - Beginner Friendly</option>
+                            <option value="B">Type B - Intermediate</option>
+                            <option value="C">Type C - Advanced</option>
+                            <option value="D">Type D - Expert</option>
+                            <option value="Family">Family Variant</option>
+                            <option value="Intermediate">Intermediate Variant</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Number of Players</label>
+                        <select id="player-count">
+                            <option value="1">1 Player (Solo Mode)</option>
+                            <option value="2" selected>2 Players</option>
+                            <option value="3">3 Players</option>
+                            <option value="4">4 Players</option>
+                        </select>
                     </div>
                 </div>
             </div>
             
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🦌</span>
-                    <span>Elk</span>
-                </div>
-                <div class="inputs">
+            <div class="section">
+                <h3 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <span>🎮 Player Setup</span>
+                </h3>
+                
+                <div class="player-grid" id="player-names">
                     <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="elk-0" min="0" value="0" onchange="updateScores()">
+                        <label class="input-label">Player 1</label>
+                        <input type="text" class="player-name-input" value="Fe">
                     </div>
                     <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="elk-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🐟</span>
-                    <span>Salmon</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="salmon-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="salmon-1" min="0" value="0" onchange="updateScores()">
+                        <label class="input-label">Player 2</label>
+                        <input type="text" class="player-name-input" value="Zo">
                     </div>
                 </div>
             </div>
             
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🦅</span>
-                    <span>Hawk</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="hawk-0" min="0" value="0" onchange="updateScores()">
+            <div class="section">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-paw"></i>
                     </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="hawk-1" min="0" value="0" onchange="updateScores()">
+                    <div>
+                        <div class="section-heading">Wildlife Scoring</div>
+                        <div class="section-subheading">Type <span id="current-game-type">A</span> Wildlife Cards</div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🦊</span>
-                    <span>Fox</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="fox-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="fox-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Habitat Section -->
-        <div class="section">
-            <h2 class="section-title">🏔️ Habitat Scoring</h2>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🏔️</span>
-                    <span>Mountains</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="mountains-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="mountains-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🌲</span>
-                    <span>Forests</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="forests-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="forests-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🌾</span>
-                    <span>Prairies</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="prairies-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="prairies-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🌊</span>
-                    <span>Wetlands</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="wetlands-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="wetlands-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🏞️</span>
-                    <span>Rivers</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="rivers-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="rivers-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Nature Tokens -->
-        <div class="section">
-            <h2 class="section-title">🌰 Nature Tokens</h2>
-            
-            <div class="row">
-                <div class="animal">
-                    <span style="font-size: 1.5rem;">🌰</span>
-                    <span>Unused Nature Tokens</span>
-                </div>
-                <div class="inputs">
-                    <div class="player-input">
-                        <div class="player-name">Fe</div>
-                        <input type="number" id="nature-0" min="0" value="0" onchange="updateScores()">
-                    </div>
-                    <div class="player-input">
-                        <div class="player-name">Zo</div>
-                        <input type="number" id="nature-1" min="0" value="0" onchange="updateScores()">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Results -->
-        <div class="results">
-            <h2 style="color: #3b82f6; text-align: center; margin-bottom: 20px;">🏆 Final Results</h2>
-            <button class="celebrate-btn" onclick="celebrate()">🎉 Celebrate Winner! 🎉</button>
-            
-            <div id="results-container">
-                <div class="result-row winner" id="result-0">
-                    <div style="display: flex; align-items: center;">
-                        <span class="rank">🥇</span>
-                        <span style="font-size: 1.2rem; font-weight: bold;">Fe</span>
-                    </div>
-                    <span class="score" id="score-0">0</span>
                 </div>
                 
-                <div class="result-row" id="result-1">
-                    <div style="display: flex; align-items: center;">
-                        <span class="rank">🥈</span>
-                        <span style="font-size: 1.2rem; font-weight: bold;">Zo</span>
+                <div id="wildlife-scoring">
+                    <!-- Wildlife scoring will be generated here -->
+                </div>
+                
+                <div class="subtotal-card">
+                    <div class="subtotal-title">Wildlife Subtotal</div>
+                    <div class="subtotal-values" id="wildlife-subtotal">
+                        <div class="subtotal-player">
+                            <div class="subtotal-label">Fe</div>
+                            <div class="subtotal-value">0</div>
+                        </div>
+                        <div class="subtotal-player">
+                            <div class="subtotal-label">Zo</div>
+                            <div class="subtotal-value">0</div>
+                        </div>
                     </div>
-                    <span class="score" id="score-1">0</span>
                 </div>
             </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <div>
+                        <div class="section-heading">Habitat Scoring</div>
+                        <div class="section-subheading">Corridor sizes & automatic majority bonuses</div>
+                    </div>
+                </div>
+                
+                <div id="habitat-scoring">
+                    <!-- Habitat scoring will be generated here -->
+                </div>
+                
+                <div class="subtotal-card" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                    <div class="subtotal-title" style="color: var(--primary-light);">Habitat Subtotal</div>
+                    <div class="subtotal-values" id="habitat-subtotal">
+                        <div class="subtotal-player">
+                            <div class="subtotal-label">Fe</div>
+                            <div class="subtotal-value" style="color: var(--primary);">0</div>
+                        </div>
+                        <div class="subtotal-player">
+                            <div class="subtotal-label">Zo</div>
+                            <div class="subtotal-value" style="color: var(--primary);">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div>
+                        <div class="section-heading">Nature Tokens</div>
+                        <div class="section-subheading">1 point each for unused Douglas Fir cones</div>
+                    </div>
+                </div>
+                
+                <div class="habitat-card">
+                    <div class="habitat-header">
+                        <div class="habitat-emoji">🌰</div>
+                        <div class="habitat-name">Unused Nature Tokens</div>
+                    </div>
+                    <p class="habitat-description">Count your remaining Douglas Fir cones</p>
+                    
+                    <div class="score-controls">
+                        <div class="player-score">
+                            <div class="player-name">Fe</div>
+                            <div class="score-input-group">
+                                <button class="score-btn" data-player="0" data-category="nature_tokens" data-delta="-1">-</button>
+                                <input type="number" class="score-input" data-player="0" data-category="nature_tokens" value="0" min="0">
+                                <button class="score-btn" data-player="0" data-category="nature_tokens" data-delta="1">+</button>
+                            </div>
+                        </div>
+                        <div class="player-score">
+                            <div class="player-name">Zo</div>
+                            <div class="score-input-group">
+                                <button class="score-btn" data-player="1" data-category="nature_tokens" data-delta="-1">-</button>
+                                <input type="number" class="score-input" data-player="1" data-category="nature_tokens" value="0" min="0">
+                                <button class="score-btn" data-player="1" data-category="nature_tokens" data-delta="1">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-card">
+                <div class="results-header">
+                    <div class="results-title">
+                        <i class="fas fa-trophy trophy-icon"></i>
+                        Final Results
+                    </div>
+                    <button class="celebrate-btn" id="celebrate-btn">
+                        🎉 Celebrate Winner! 🎉
+                    </button>
+                </div>
+                
+                <div id="final-results">
+                    <!-- Final results will be generated here -->
+                </div>
+            </div>
+            
+            <button class="reset-btn" id="reset-btn">
+                <i class="fas fa-redo"></i>
+                Reset All Scores
+            </button>
+            
+            <div class="footer">
+                <p class="footer-text">🌲 Made with ❤️ for Fe, Zo, Ra, Hu & Nu 🦌</p>
+                <p class="footer-note">Ultimate Cascadia Board Game Calculator | Auto-saves your progress</p>
+            </div>
         </div>
-        
-        <button class="reset-btn" onclick="resetAll()">🔄 Reset All Scores</button>
     </div>
     
     <!-- Celebration Modal -->
-    <div class="modal" id="celebration-modal">
+    <div class="modal-overlay" id="celebration-modal" style="display: none;">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeCelebration()">×</button>
-            <div style="font-size: 3rem; margin-bottom: 15px;">🏆</div>
-            <div class="celebration-title">CASCADIA VICTORY!</div>
-            <div style="font-size: 1.5rem; margin-bottom: 20px;" id="winner-text">🎉 Fe WINS! 🎉</div>
-            <div class="animals-row">
-                <span class="bounce">🐻</span>
-                <span class="bounce">🦌</span>
-                <span class="bounce">🐟</span>
-                <span class="bounce">🦅</span>
-                <span class="bounce">🦊</span>
+            <button class="close-btn" id="close-celebration">×</button>
+            
+            <div class="modal-header">
+                <div class="modal-trophy celebrate-bounce">🏆</div>
+                <h2 class="modal-title celebrate-pulse">CASCADIA VICTORY!</h2>
+                <div class="modal-subtitle celebrate-wiggle">🎉 <span id="winner-name">Fe</span> WINS! 🎉</div>
+                <div class="modal-winner">Score: <span id="winner-score">120</span> Points</div>
+                <div class="modal-stats">W: <span id="winner-wildlife">45</span> • H: <span id="winner-habitat">55</span> • N: <span id="winner-nature">20</span></div>
             </div>
-            <div style="color: #22c55e; font-size: 1.2rem; margin: 15px 0;">
-                🌲 THE FOREST DECLARES 🌲<br>
-                "Master of the Wild Cascadia!"
+            
+            <div class="modal-section">
+                <div class="text-center celebrate-slide-in">
+                    <div class="text-lg celebrate-float" style="font-weight: 700;">🌲 THE FOREST DECLARES 🌲</div>
+                    <div class="text-sm" style="font-weight: 600;">"Master of the Wild Cascadia!"</div>
+                </div>
             </div>
-            <div style="background: linear-gradient(to right, #eab308, #f97316); color: black; padding: 12px 25px; border-radius: 10px; font-weight: bold; margin-top: 20px;">
-                👑 CASCADIA CHAMPION 👑
+            
+            <div class="animals-grid">
+                <div class="animal-cell celebrate-slide-in" style="animation-delay: 0.3s;">
+                    <div class="animal-icon celebrate-bounce">🐻</div>
+                    <div class="animal-message">ROARS!</div>
+                </div>
+                <div class="animal-cell celebrate-slide-in" style="animation-delay: 0.6s;">
+                    <div class="animal-icon celebrate-wiggle">🦌</div>
+                    <div class="animal-message">PRANCES!</div>
+                </div>
+                <div class="animal-cell celebrate-slide-in" style="animation-delay: 0.9s;">
+                    <div class="animal-icon celebrate-bounce">🐟</div>
+                    <div class="animal-message">LEAPS!</div>
+                </div>
+                <div class="animal-cell celebrate-slide-in" style="animation-delay: 1.2s;">
+                    <div class="animal-icon celebrate-wiggle">🦅</div>
+                    <div class="animal-message">SOARS!</div>
+                </div>
+                <div class="animal-cell celebrate-slide-in" style="animation-delay: 1.5s;">
+                    <div class="animal-icon celebrate-bounce">🦊</div>
+                    <div class="animal-message">DANCES!</div>
+                </div>
+            </div>
+            
+            <div class="modal-section text-center">
+                <div class="text-base celebrate-pulse" style="font-weight: 700;">🗻 FROM MOUNTAINS TO SEAS 🌊</div>
+                <div class="flex justify-center gap-3 text-2xl my-3">
+                    <span class="celebrate-bounce" style="animation-delay: 0.1s;">🏔️</span>
+                    <span class="celebrate-wiggle" style="animation-delay: 0.2s;">🌲</span>
+                    <span class="celebrate-bounce" style="animation-delay: 0.3s;">🌾</span>
+                    <span class="celebrate-wiggle" style="animation-delay: 0.4s;">🌊</span>
+                    <span class="celebrate-bounce" style="animation-delay: 0.5s;">🏞️</span>
+                </div>
+            </div>
+            
+            <div class="modal-section text-center">
+                <div class="flex justify-center gap-2 text-2xl mb-3">
+                    <span class="celebrate-sparkle" style="animation-delay: 0s; animation-duration: 1.5s;">✨</span>
+                    <span class="celebrate-sparkle" style="animation-delay: 0.2s; animation-duration: 1.5s;">⭐</span>
+                    <span class="celebrate-sparkle" style="animation-delay: 0.4s; animation-duration: 1.5s;">💫</span>
+                    <span class="celebrate-sparkle" style="animation-delay: 0.6s; animation-duration: 1.5s;">🌟</span>
+                </div>
+                
+                <div class="champion-badge celebrate-pulse">
+                    👑 CASCADIA CHAMPION 👑
+                </div>
+                
+                <div class="text-xs" style="color: var(--primary-light); font-weight: 600;">
+                    Forever remembered in the great forest! 🌲✨
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        function updateScores() {
-            // Calculate totals for each player
-            const animals = ['bear', 'elk', 'salmon', 'hawk', 'fox'];
-            const habitats = ['mountains', 'forests', 'prairies', 'wetlands', 'rivers'];
-            
-            let scores = [0, 0];
-            
-            // Wildlife scores
-            for (let player = 0; player < 2; player++) {
-                for (let animal of animals) {
-                    const input = document.getElementById(animal + '-' + player);
-                    scores[player] += parseInt(input.value) || 0;
+        // Game state
+        const state = {
+            gameType: 'A',
+            playerCount: 2,
+            players: [
+                { name: 'Fe', scores: {} },
+                { name: 'Zo', scores: {} }
+            ],
+            expandedHelp: {},
+            showCelebration: false
+        };
+
+        // Wildlife scoring information
+        const wildlifeScoring = {
+            bear: {
+                A: { 
+                    type: 'pairs', 
+                    description: 'Score for pairs of bears (no groups can touch each other)',
+                    helper: 'Count your bear pairs: 1st pair = 4pts, 2nd pair = 11pts, 3rd pair = 19pts, 4th pair = 27pts',
+                    examples: '2 bears = 4pts, 4 bears = 11pts, 6 bears = 19pts, 8 bears = 27pts',
+                    maxRealistic: 27
+                },
+                B: { 
+                    type: 'groups', 
+                    description: '10 points per group of exactly 3 bears',
+                    helper: 'Count groups of exactly 3 bears. Each group = 10pts. Groups cannot touch each other.',
+                    examples: '3 bears = 10pts, 6 bears = 20pts, 9 bears = 30pts',
+                    maxRealistic: 40
+                },
+                C: { 
+                    type: 'mixed', 
+                    description: 'Groups of 1-3 bears, +3 bonus for having all sizes',
+                    helper: 'Singles=2pts, Pairs=5pts, Triples=8pts. +3 bonus if you have at least one of each size.',
+                    examples: '1+2+3 bears = 2+5+8+3 = 18pts',
+                    maxRealistic: 35
+                },
+                D: { 
+                    type: 'groups', 
+                    description: 'Score for groups of 2-4 bears',
+                    helper: 'Count each group: 2 bears=3pts, 3 bears=7pts, 4 bears=12pts',
+                    examples: 'Two groups of 3 = 14pts, One group of 4 = 12pts',
+                    maxRealistic: 30
                 }
-                
-                // Habitat scores
-                for (let habitat of habitats) {
-                    const input = document.getElementById(habitat + '-' + player);
-                    scores[player] += parseInt(input.value) || 0;
+            },
+            elk: {
+                A: { 
+                    type: 'lines', 
+                    description: 'Score for straight lines of elk (flat edge to flat edge)',
+                    helper: 'Count each straight line: 2=2pts, 3=5pts, 4=9pts, 5=14pts',
+                    examples: 'Line of 3 + Line of 2 = 5+2 = 7pts',
+                    maxRealistic: 28
+                },
+                B: { 
+                    type: 'shapes', 
+                    description: 'Score for specific L and I shapes shown on card',
+                    helper: 'Look at the card for exact shapes. Each shape has specific point values.',
+                    examples: 'Refer to your Type B Elk card for shape scoring',
+                    maxRealistic: 25
+                },
+                C: { 
+                    type: 'groups', 
+                    description: 'Any shape groups: bigger groups = more points',
+                    helper: 'Count each connected group: 1=1pt, 2=3pts, 3=6pts, 4=10pts, 5=15pts, 6=21pts',
+                    examples: 'Group of 4 + Group of 2 = 10+3 = 13pts',
+                    maxRealistic: 36
+                },
+                D: { 
+                    type: 'circles', 
+                    description: 'Score for circular formations shown on card',
+                    helper: 'Form circles as shown on the card. Each complete circle scores points.',
+                    examples: 'Refer to your Type D Elk card for circle patterns',
+                    maxRealistic: 20
                 }
-                
-                // Nature tokens
-                const natureInput = document.getElementById('nature-' + player);
-                scores[player] += parseInt(natureInput.value) || 0;
+            },
+            salmon: {
+                A: { 
+                    type: 'runs', 
+                    description: 'Score for runs (chains) up to 7 salmon',
+                    helper: 'Count each run: 1=2pts, 2=4pts, 3=7pts, 4=11pts, 5=16pts, 6=22pts, 7=28pts',
+                    examples: 'Run of 4 + Run of 2 = 11+4 = 15pts',
+                    maxRealistic: 56
+                },
+                B: { 
+                    type: 'runs', 
+                    description: 'Score for runs up to 5 salmon',
+                    helper: 'Count each run: 1=1pt, 2=3pts, 3=6pts, 4=10pts, 5=15pts',
+                    examples: 'Run of 5 + Run of 3 = 15+6 = 21pts',
+                    maxRealistic: 30
+                },
+                C: { 
+                    type: 'runs', 
+                    description: 'Only runs of 3-5 score points',
+                    helper: 'Ignore runs of 1-2. Count runs: 3=4pts, 4=8pts, 5=12pts',
+                    examples: 'Run of 4 + Run of 3 = 8+4 = 12pts',
+                    maxRealistic: 24
+                },
+                D: { 
+                    type: 'adjacent', 
+                    description: '1pt per salmon + 1pt per adjacent animal',
+                    helper: 'Count all salmon, then count every adjacent animal (any type) next to any salmon.',
+                    examples: '3 salmon + 5 adjacent animals = 8pts',
+                    maxRealistic: 40
+                }
+            },
+            hawk: {
+                A: { 
+                    type: 'isolated', 
+                    description: 'Score isolated hawks (not touching any other hawks)',
+                    helper: 'Count isolated hawks: 1=2pts, 2=5pts, 3=8pts, 4=11pts, 5=14pts, 6=18pts, etc.',
+                    examples: '4 isolated hawks = 11pts',
+                    maxRealistic: 30
+                },
+                B: { 
+                    type: 'sight', 
+                    description: 'Isolated hawks with line of sight to other hawks',
+                    helper: 'Hawks must be isolated AND have line of sight: 1=3pts, 2=6pts, 3=10pts, 4=14pts, etc.',
+                    examples: '3 isolated hawks with line of sight = 10pts',
+                    maxRealistic: 35
+                },
+                C: { 
+                    type: 'lines', 
+                    description: '3 points per line of sight between any two hawks',
+                    helper: 'Count every line of sight between hawks. Each line = 3pts.',
+                    examples: '4 lines of sight = 12pts',
+                    maxRealistic: 30
+                },
+                D: { 
+                    type: 'pairs', 
+                    description: 'Hawk pairs score by unique animals between them',
+                    helper: 'Form pairs. Count unique animal types between each pair: 0=0pts, 1=2pts, 2=5pts, 3=9pts, 4=14pts',
+                    examples: 'Pair with 2 unique animals between = 5pts',
+                    maxRealistic: 25
+                }
+            },
+            fox: {
+                A: { 
+                    type: 'adjacent', 
+                    description: 'Score per unique adjacent animal types (including other foxes)',
+                    helper: 'For each fox, count unique animal types touching it: 1=1pt, 2=3pts, 3=5pts, 4=7pts, 5=9pts, 6=12pts',
+                    examples: 'Fox touching bear+elk+salmon = 5pts',
+                    maxRealistic: 30
+                },
+                B: { 
+                    type: 'pairs', 
+                    description: 'Score per unique animal pairs adjacent',
+                    helper: 'For each fox, count unique animal pairs nearby: 1=1pt, 2=4pts, 3=8pts, 4=12pts',
+                    examples: 'Fox near bear pair + elk pair = 4pts',
+                    maxRealistic: 25
+                },
+                C: { 
+                    type: 'most', 
+                    description: 'Score most abundant adjacent animal type only',
+                    helper: 'For each fox, count only the most common adjacent animal type: 2=3pts, 3=5pts, 4=7pts',
+                    examples: 'Fox touching 3 bears + 1 elk = 5pts (only count bears)',
+                    maxRealistic: 20
+                },
+                D: { 
+                    type: 'pair_bonus', 
+                    description: 'Fox pairs score by adjacent animal pairs',
+                    helper: 'Form fox pairs. Count animal pairs near the fox pair: 1=2pts, 2=6pts, 3=12pts, 4=18pts',
+                    examples: 'Fox pair near 2 animal pairs = 6pts',
+                    maxRealistic: 30
+                }
             }
+        };
+
+        // Habitats
+        const habitats = [
+            { key: 'mountains', name: 'Mountains', emoji: '🏔️' },
+            { key: 'forests', name: 'Forests', emoji: '🌲' },
+            { key: 'prairies', name: 'Prairies', emoji: '🌾' },
+            { key: 'wetlands', name: 'Wetlands', emoji: '🌊' },
+            { key: 'rivers', name: 'Rivers', emoji: '🏞️' }
+        ];
+
+        // Wildlife animals
+        const wildlifeAnimals = [
+            { key: 'bear', name: 'Bear', emoji: '🐻' },
+            { key: 'elk', name: 'Elk', emoji: '🦌' },
+            { key: 'salmon', name: 'Salmon', emoji: '🐟' },
+            { key: 'hawk', name: 'Hawk', emoji: '🦅' },
+            { key: 'fox', name: 'Fox', emoji: '🦊' }
+        ];
+
+        // DOM Elements
+        const dom = {
+            gameType: document.getElementById('game-type'),
+            playerCount: document.getElementById('player-count'),
+            playerNames: document.getElementById('player-names'),
+            wildlifeScoring: document.getElementById('wildlife-scoring'),
+            habitatScoring: document.getElementById('habitat-scoring'),
+            wildlifeSubtotal: document.getElementById('wildlife-subtotal'),
+            habitatSubtotal: document.getElementById('habitat-subtotal'),
+            finalResults: document.getElementById('final-results'),
+            resetBtn: document.getElementById('reset-btn'),
+            celebrateBtn: document.getElementById('celebrate-btn'),
+            celebrationModal: document.getElementById('celebration-modal'),
+            closeCelebration: document.getElementById('close-celebration'),
+            winnerName: document.getElementById('winner-name'),
+            winnerScore: document.getElementById('winner-score'),
+            winnerWildlife: document.getElementById('winner-wildlife'),
+            winnerHabitat: document.getElementById('winner-habitat'),
+            winnerNature: document.getElementById('winner-nature'),
+            currentGameType: document.getElementById('current-game-type')
+        };
+
+        // Initialize the app
+        function initApp() {
+            loadState();
+            setupEventListeners();
+            renderPlayerNames();
+            renderWildlifeScoring();
+            renderHabitatScoring();
+            updateResults();
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('cascadia-game-state');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    state.gameType = data.gameType || 'A';
+                    state.playerCount = data.playerCount || 2;
+                    state.players = data.players || [
+                        { name: 'Fe', scores: {} },
+                        { name: 'Zo', scores: {} }
+                    ];
+                    state.expandedHelp = data.expandedHelp || {};
+                    
+                    // Update UI to match state
+                    dom.gameType.value = state.gameType;
+                    dom.playerCount.value = state.playerCount;
+                    dom.currentGameType.textContent = state.gameType;
+                } catch (e) {
+                    console.log('Could not load saved game');
+                }
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('cascadia-game-state', JSON.stringify(state));
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Game type change
+            dom.gameType.addEventListener('change', (e) => {
+                state.gameType = e.target.value;
+                dom.currentGameType.textContent = state.gameType;
+                renderWildlifeScoring();
+                updateResults();
+                saveState();
+            });
             
-            // Update display
-            document.getElementById('score-0').textContent = scores[0];
-            document.getElementById('score-1').textContent = scores[1];
+            // Player count change
+            dom.playerCount.addEventListener('change', (e) => {
+                const newCount = parseInt(e.target.value);
+                setPlayerCount(newCount);
+            });
             
-            // Update winner
-            const result0 = document.getElementById('result-0');
-            const result1 = document.getElementById('result-1');
+            // Player name changes
+            document.querySelectorAll('.player-name-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const index = Array.from(document.querySelectorAll('.player-name-input')).indexOf(e.target);
+                    if (index !== -1 && index < state.players.length) {
+                        state.players[index].name = e.target.value;
+                        updateResults();
+                        saveState();
+                    }
+                });
+            });
             
-            if (scores[0] > scores[1]) {
-                result0.classList.add('winner');
-                result1.classList.remove('winner');
-                result0.querySelector('.rank').textContent = '🥇';
-                result1.querySelector('.rank').textContent = '🥈';
-            } else if (scores[1] > scores[0]) {
-                result1.classList.add('winner');
-                result0.classList.remove('winner');
-                result1.querySelector('.rank').textContent = '🥇';
-                result0.querySelector('.rank').textContent = '🥈';
+            // Score buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('score-btn')) {
+                    const playerIndex = parseInt(e.target.dataset.player);
+                    const category = e.target.dataset.category;
+                    const delta = parseInt(e.target.dataset.delta);
+                    adjustScore(playerIndex, category, delta);
+                }
+            });
+            
+            // Score inputs
+            document.addEventListener('input', (e) => {
+                if (e.target.classList.contains('score-input')) {
+                    const playerIndex = parseInt(e.target.dataset.player);
+                    const category = e.target.dataset.category;
+                    const value = parseInt(e.target.value) || 0;
+                    updateScore(playerIndex, category, value);
+                }
+            });
+            
+            // Help toggles
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('help-btn')) {
+                    const animal = e.target.dataset.animal;
+                    toggleHelp(animal);
+                }
+            });
+            
+            // Reset button
+            dom.resetBtn.addEventListener('click', resetAllScores);
+            
+            // Celebration button
+            dom.celebrateBtn.addEventListener('click', celebrateWinner);
+            
+            // Close celebration modal
+            dom.closeCelebration.addEventListener('click', () => {
+                dom.celebrationModal.style.display = 'none';
+                state.showCelebration = false;
+            });
+        }
+
+        // Set player count
+        function setPlayerCount(count) {
+            const defaultNames = ['Fe', 'Zo', 'Ra', 'Hu', 'Nu'];
+            const newPlayers = Array.from({ length: count }, (_, i) => ({
+                name: state.players[i]?.name || defaultNames[i] || `Player ${i + 1}`,
+                scores: state.players[i]?.scores || {}
+            }));
+            
+            state.playerCount = count;
+            state.players = newPlayers;
+            
+            renderPlayerNames();
+            renderWildlifeScoring();
+            renderHabitatScoring();
+            updateResults();
+            saveState();
+        }
+
+        // Update player name
+        function updatePlayerName(index, name) {
+            if (index < state.players.length) {
+                state.players[index].name = name;
+                updateResults();
+                saveState();
+            }
+        }
+
+        // Update score
+        function updateScore(playerIndex, category, value) {
+            if (playerIndex < state.players.length) {
+                const newValue = Math.max(0, parseInt(value) || 0);
+                state.players[playerIndex].scores[category] = newValue;
+                updateResults();
+                saveState();
+            }
+        }
+
+        // Adjust score
+        function adjustScore(playerIndex, category, delta) {
+            if (playerIndex < state.players.length) {
+                const currentScore = getScore(playerIndex, category);
+                const newValue = Math.max(0, currentScore + delta);
+                state.players[playerIndex].scores[category] = newValue;
+                updateResults();
+                saveState();
+                
+                // Update input value
+                const input = document.querySelector(`.score-input[data-player="${playerIndex}"][data-category="${category}"]`);
+                if (input) {
+                    input.value = newValue;
+                }
+            }
+        }
+
+        // Get score
+        function getScore(playerIndex, category) {
+            return state.players[playerIndex]?.scores[category] || 0;
+        }
+
+        // Check if score is unusually high
+        function isScoreUnusual(playerIndex, animal) {
+            const score = getScore(playerIndex, animal);
+            const maxRealistic = wildlifeScoring[animal][state.gameType].maxRealistic;
+            return score > maxRealistic;
+        }
+
+        // Calculate habitat majority bonus
+        function calculateHabitatMajority(playerIndex, habitatKey) {
+            const corridorSizes = state.players.map((_, i) => getScore(i, `${habitatKey}_corridor`));
+            const playerSize = corridorSizes[playerIndex];
+            
+            if (playerSize === 0) return 0;
+            
+            if (state.playerCount === 1) {
+                return playerSize >= 7 ? 2 : 0;
+            } else if (state.playerCount === 2) {
+                const maxSize = Math.max(...corridorSizes);
+                const maxCount = corridorSizes.filter(size => size === maxSize && size > 0).length;
+                
+                if (playerSize === maxSize && playerSize > 0) {
+                    return maxCount > 1 ? 1 : 2;
+                }
+                return 0;
             } else {
-                result0.classList.add('winner');
-                result1.classList.add('winner');
-                result0.querySelector('.rank').textContent = '🥇';
-                result1.querySelector('.rank').textContent = '🥇';
+                const nonZeroSizes = corridorSizes.filter(size => size > 0);
+                if (nonZeroSizes.length === 0) return 0;
+                
+                const sortedUnique = [...new Set(nonZeroSizes)].sort((a, b) => b - a);
+                const largest = sortedUnique[0];
+                const secondLargest = sortedUnique[1] || 0;
+                
+                const largestCount = corridorSizes.filter(size => size === largest).length;
+                const secondCount = corridorSizes.filter(size => size === secondLargest && size > 0).length;
+                
+                if (playerSize === largest) {
+                    if (largestCount === 1) return 3;
+                    if (largestCount === 2) return 2;
+                    return 1;
+                } else if (playerSize === secondLargest && playerSize > 0 && largestCount === 1) {
+                    return secondCount === 1 ? 1 : 0;
+                }
+                return 0;
             }
         }
-        
-        function celebrate() {
-            const scores = [
-                parseInt(document.getElementById('score-0').textContent),
-                parseInt(document.getElementById('score-1').textContent)
-            ];
-            
-            const winner = scores[0] >= scores[1] ? 'Fe' : 'Zo';
-            const winnerScore = Math.max(scores[0], scores[1]);
-            
-            document.getElementById('winner-text').textContent = `🎉 ${winner} WINS! 🎉\nScore: ${winnerScore} Points`;
-            document.getElementById('celebration-modal').style.display = 'flex';
-            
-            setTimeout(() => {
-                closeCelebration();
-            }, 8000);
+
+        // Calculate wildlife total
+        function calculateWildlifeTotal(playerIndex) {
+            return wildlifeAnimals.reduce((total, animal) => {
+                return total + (getScore(playerIndex, animal.key) || 0);
+            }, 0);
         }
-        
-        function closeCelebration() {
-            document.getElementById('celebration-modal').style.display = 'none';
+
+        // Calculate habitat total
+        function calculateHabitatTotal(playerIndex) {
+            return habitats.reduce((total, habitat) => {
+                const corridor = getScore(playerIndex, `${habitat.key}_corridor`) || 0;
+                const majority = calculateHabitatMajority(playerIndex, habitat.key);
+                return total + corridor + majority;
+            }, 0);
         }
-        
-        function resetAll() {
-            const inputs = document.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => input.value = 0);
-            updateScores();
+
+        // Calculate total score
+        function calculateTotalScore(playerIndex) {
+            const wildlife = calculateWildlifeTotal(playerIndex);
+            const habitat = calculateHabitatTotal(playerIndex);
+            const nature = getScore(playerIndex, 'nature_tokens') || 0;
+            return wildlife + habitat + nature;
         }
-        
-        // Initialize
-        updateScores();
+
+        // Reset all scores
+        function resetAllScores() {
+            state.players = state.players.map(player => ({
+                ...player,
+                scores: {}
+            }));
+            
+            // Reset all input values
+            document.querySelectorAll('.score-input').forEach(input => {
+                input.value = 0;
+            });
+            
+            updateResults();
+            saveState();
+        }
+
+        // Toggle help
+        function toggleHelp(animalKey) {
+            state.expandedHelp[animalKey] = !state.expandedHelp[animalKey];
+            renderWildlifeScoring();
+        }
+
+        // Get ranking
+        function getRanking() {
+            const scores = state.players.map((player, index) => ({
+                name: player.name,
+                score: calculateTotalScore(index),
+                nature: getScore(index, 'nature_tokens') || 0,
+                wildlife: calculateWildlifeTotal(index),
+                habitat: calculateHabitatTotal(index),
+                index
+            }));
+            
+            scores.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return b.nature - a.nature;
+            });
+            
+            return scores;
+        }
+
+        // Get score category
+        function getScoreCategory(score, isWinner = false) {
+            if (isWinner && score < 60) return { label: 'Victory!', class: 'keep-trying' };
+            
+            if (score >= 110) return { label: 'Ascended!', class: 'ascended' };
+            if (score >= 100) return { label: 'Elite!', class: 'elite' };
+            if (score >= 90) return { label: 'Excellent!', class: 'excellent' };
+            if (score >= 80) return { label: 'Very Good!', class: 'very-good' };
+            if (score >= 70) return { label: 'Getting it!', class: 'getting-it' };
+            if (score >= 60) return { label: 'Good start!', class: 'good-start' };
+            return { label: 'Keep trying!', class: 'keep-trying' };
+        }
+
+        // Celebrate winner
+        function celebrateWinner() {
+            const ranking = getRanking();
+            if (ranking.length > 0) {
+                const winner = ranking[0];
+                dom.winnerName.textContent = winner.name;
+                dom.winnerScore.textContent = winner.score;
+                dom.winnerWildlife.textContent = winner.wildlife;
+                dom.winnerHabitat.textContent = winner.habitat;
+                dom.winnerNature.textContent = winner.nature;
+                
+                dom.celebrationModal.style.display = 'flex';
+                state.showCelebration = true;
+                
+                // Auto-close after 12 seconds
+                setTimeout(() => {
+                    dom.celebrationModal.style.display = 'none';
+                    state.showCelebration = false;
+                }, 12000);
+            }
+        }
+
+        // Render player names
+        function renderPlayerNames() {
+            let html = '';
+            state.players.forEach((player, index) => {
+                html += `
+                    <div class="player-input">
+                        <label class="input-label">Player ${index + 1}</label>
+                        <input type="text" class="player-name-input" value="${player.name}" 
+                               data-index="${index}">
+                    </div>
+                `;
+            });
+            dom.playerNames.innerHTML = html;
+            
+            // Reattach event listeners
+            document.querySelectorAll('.player-name-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    updatePlayerName(index, e.target.value);
+                });
+            });
+        }
+
+        // Render wildlife scoring
+        function renderWildlifeScoring() {
+            let html = '';
+            
+            wildlifeAnimals.forEach(animal => {
+                const scoring = wildlifeScoring[animal.key][state.gameType] || wildlifeScoring[animal.key]['A'];
+                const isExpanded = state.expandedHelp[animal.key] || false;
+                
+                html += `
+                    <div class="scoring-card">
+                        <div class="scoring-header">
+                            <div class="scoring-content">
+                                <div class="animal-header">
+                                    <div class="animal-emoji">${animal.emoji}</div>
+                                    <div class="animal-name">${animal.name}</div>
+                                    <button class="help-btn" data-animal="${animal.key}">
+                                        <i class="fas fa-question-circle"></i>
+                                    </button>
+                                </div>
+                                <p class="animal-description">${scoring.description}</p>
+                                
+                                <div class="score-controls">
+                                    ${state.players.map((player, playerIndex) => `
+                                        <div class="player-score">
+                                            <div class="player-name">${player.name}</div>
+                                            <div class="score-input-group">
+                                                <button class="score-btn" data-player="${playerIndex}" data-category="${animal.key}" data-delta="-1">-</button>
+                                                <input type="number" class="score-input" data-player="${playerIndex}" data-category="${animal.key}" 
+                                                       value="${getScore(playerIndex, animal.key)}" min="0">
+                                                <button class="score-btn" data-player="${playerIndex}" data-category="${animal.key}" data-delta="1">+</button>
+                                            </div>
+                                            <div class="score-warning">
+                                                ${isScoreUnusual(playerIndex, animal.key) ? 'Unusually high!' : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${isExpanded ? `
+                            <div class="help-content">
+                                <div class="help-text"><strong>How to Score:</strong> ${scoring.helper}</div>
+                                <div class="help-examples"><strong>Examples:</strong> ${scoring.examples}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            dom.wildlifeScoring.innerHTML = html;
+        }
+
+        // Render habitat scoring
+        function renderHabitatScoring() {
+            let html = '';
+            
+            habitats.forEach(habitat => {
+                html += `
+                    <div class="habitat-card">
+                        <div class="habitat-header">
+                            <div class="habitat-emoji">${habitat.emoji}</div>
+                            <div class="habitat-name">${habitat.name}</div>
+                        </div>
+                        <p class="habitat-description">Enter your largest contiguous corridor size</p>
+                        <p class="bonus-indicator">Majority bonuses calculated automatically</p>
+                        
+                        <div class="score-controls">
+                            ${state.players.map((player, playerIndex) => `
+                                <div class="player-score">
+                                    <div class="player-name">${player.name}</div>
+                                    <div class="score-input-group">
+                                        <button class="score-btn" data-player="${playerIndex}" data-category="${habitat.key}_corridor" data-delta="-1">-</button>
+                                        <input type="number" class="score-input" data-player="${playerIndex}" data-category="${habitat.key}_corridor" 
+                                               value="${getScore(playerIndex, `${habitat.key}_corridor`)}" min="0">
+                                        <button class="score-btn" data-player="${playerIndex}" data-category="${habitat.key}_corridor" data-delta="1">+</button>
+                                    </div>
+                                    <div class="bonus-indicator">
+                                        +${calculateHabitatMajority(playerIndex, habitat.key)} bonus
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            dom.habitatScoring.innerHTML = html;
+        }
+
+        // Update results
+        function updateResults() {
+            // Update wildlife subtotal
+            let wildlifeHtml = '';
+            state.players.forEach((player, index) => {
+                wildlifeHtml += `
+                    <div class="subtotal-player">
+                        <div class="subtotal-label">${player.name}</div>
+                        <div class="subtotal-value">${calculateWildlifeTotal(index)}</div>
+                    </div>
+                `;
+            });
+            dom.wildlifeSubtotal.innerHTML = wildlifeHtml;
+            
+            // Update habitat subtotal
+            let habitatHtml = '';
+            state.players.forEach((player, index) => {
+                habitatHtml += `
+                    <div class="subtotal-player">
+                        <div class="subtotal-label">${player.name}</div>
+                        <div class="subtotal-value">${calculateHabitatTotal(index)}</div>
+                    </div>
+                `;
+            });
+            dom.habitatSubtotal.innerHTML = habitatHtml;
+            
+            // Update nature tokens inputs
+            state.players.forEach((player, index) => {
+                const input = document.querySelector(`.score-input[data-player="${index}"][data-category="nature_tokens"]`);
+                if (input) {
+                    input.value = getScore(index, 'nature_tokens');
+                }
+            });
+            
+            // Update final results
+            const ranking = getRanking();
+            let resultsHtml = '';
+            
+            ranking.forEach((player, rank) => {
+                const isWinner = rank === 0;
+                const category = getScoreCategory(player.score, isWinner);
+                
+                resultsHtml += `
+                    <div class="player-result ${isWinner ? 'winner' : ''}">
+                        <div class="result-content">
+                            <div class="result-left">
+                                <div class="result-rank ${`rank-${rank+1}`}">
+                                    ${rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank+1}th`}
+                                </div>
+                                <div>
+                                    <div class="result-name">${player.name}</div>
+                                    <div class="result-stats">
+                                        <span>Nature: ${player.nature}</span>
+                                        <span class="result-tag ${category.class}">${category.label}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-score">${player.score}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            dom.finalResults.innerHTML = resultsHtml;
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
