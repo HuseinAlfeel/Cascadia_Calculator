@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { RotateCcw, Trophy, Mountain, Trees, Wheat, Waves, MapPin, Plus, Minus, HelpCircle, ChevronDown, ChevronUp, Save, Share2, BarChart3 } from 'lucide-react';
+const { useState, useEffect } = React;
+const { RotateCcw, Trophy, Mountain, Trees, Wheat, Waves, MapPin, Plus, Minus, HelpCircle } = lucide;
 
 // Custom CSS to hide number input spinners and add celebration animations
 const hideSpinnersStyle = `
-  /* Hide Chrome, Safari, Edge spinners */
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
   
-  /* Hide Firefox spinners */
   input[type="number"] {
     -moz-appearance: textfield;
   }
 
-  /* Celebration Animations */
   @keyframes bounce {
     0%, 20%, 53%, 80%, 100% {
       transform: translate3d(0,0,0);
@@ -332,27 +329,6 @@ const CascadiaCalculator = () => {
     setPlayers(newPlayers);
   }, [playerCount]);
 
-  // Load saved game state
-  useEffect(() => {
-    const saved = localStorage.getItem('cascadia-game-state');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        setGameType(data.gameType || 'A');
-        setPlayerCount(data.playerCount || 2);
-        setPlayers(data.players || players);
-      } catch (e) {
-        console.log('Could not load saved game');
-      }
-    }
-  }, []);
-
-  // Save game state
-  useEffect(() => {
-    const gameState = { gameType, playerCount, players };
-    localStorage.setItem('cascadia-game-state', JSON.stringify(gameState));
-  }, [gameType, playerCount, players]);
-
   const updatePlayerName = (index, name) => {
     const newPlayers = [...players];
     newPlayers[index].name = name;
@@ -450,7 +426,6 @@ const CascadiaCalculator = () => {
       scores: {}
     }));
     setPlayers(newPlayers);
-    localStorage.removeItem('cascadia-game-state');
   };
 
   const toggleHelp = (animalKey) => {
@@ -518,535 +493,846 @@ const CascadiaCalculator = () => {
 
     const sparkleElements = ['✨', '⭐', '💫', '🌟'];
 
-    return (
-      <div 
-        className="fixed inset-0 bg-gradient-to-br from-green-900/95 via-blue-900/95 to-purple-900/95 backdrop-blur-md z-50 overflow-hidden"
-      >
+    return React.createElement('div', {
+      className: "fixed inset-0 bg-gradient-to-br from-green-900/95 via-blue-900/95 to-purple-900/95 backdrop-blur-md z-50 overflow-hidden"
+    }, [
+      // Background Effects
+      React.createElement('div', {
+        key: 'bg',
+        className: "absolute inset-0 overflow-hidden pointer-events-none"
+      }, [
+        // Floating sparkles
+        ...Array.from({ length: 15 }).map((_, i) => 
+          React.createElement('div', {
+            key: `sparkle-${i}`,
+            className: "absolute text-lg celebrate-sparkle",
+            style: {
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${2 + Math.random()}s`
+            }
+          }, sparkleElements[Math.floor(Math.random() * sparkleElements.length)])
+        ),
+        // Falling leaves
+        ...Array.from({ length: 10 }).map((_, i) => 
+          React.createElement('div', {
+            key: `leaf-${i}`,
+            className: "absolute text-2xl celebrate-confetti",
+            style: {
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${4 + Math.random() * 2}s`
+            }
+          }, Math.random() > 0.5 ? '🍂' : '🌿')
+        )
+      ]),
+      
+      // BOTTOM CELEBRATION
+      React.createElement('div', {
+        key: 'celebration',
+        className: "absolute bottom-0 left-0 right-0 flex justify-center p-4"
+      }, React.createElement('div', {
+        className: "bg-gradient-to-br from-green-800/70 via-blue-800/70 to-purple-800/70 backdrop-blur-xl rounded-2xl border-2 border-yellow-400/80 shadow-2xl p-4 text-center relative overflow-hidden w-full max-w-sm"
+      }, [
+        // Glowing border effect
+        React.createElement('div', {
+          key: 'glow',
+          className: "absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-green-400/30 to-blue-400/30 rounded-2xl blur-lg"
+        }),
         
-        {/* Background Effects */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Floating sparkles */}
-          {Array.from({ length: 15 }).map((_, i) => (
-            <div
-              key={`sparkle-${i}`}
-              className="absolute text-lg celebrate-sparkle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${2 + Math.random()}s`
-              }}
-            >
-              {sparkleElements[Math.floor(Math.random() * sparkleElements.length)]}
-            </div>
-          ))}
+        // Close Button
+        React.createElement('button', {
+          key: 'close',
+          onClick: () => setShowCelebration(false),
+          className: "absolute top-2 right-2 text-white hover:text-yellow-300 text-2xl z-30 bg-black/50 rounded-full w-8 h-8 flex items-center justify-center font-bold"
+        }, '×'),
 
-          {/* Falling leaves */}
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div
-              key={`leaf-${i}`}
-              className="absolute text-2xl celebrate-confetti"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${4 + Math.random() * 2}s`
-              }}
-            >
-              {Math.random() > 0.5 ? '🍂' : '🌿'}
-            </div>
-          ))}
-        </div>
+        // Header
+        React.createElement('div', {
+          key: 'header',
+          className: "relative z-20 celebrate-slide-in mb-3"
+        }, [
+          React.createElement('div', {
+            key: 'trophy',
+            className: "text-4xl mb-2 celebrate-bounce"
+          }, '🏆'),
+          React.createElement('h1', {
+            key: 'title',
+            className: "text-2xl font-bold bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 bg-clip-text text-transparent mb-2 celebrate-pulse"
+          }, 'CASCADIA VICTORY!'),
+          React.createElement('div', {
+            key: 'winner',
+            className: "text-xl text-white mb-2 celebrate-wiggle font-bold"
+          }, `🎉 ${winner.name} WINS! 🎉`),
+          React.createElement('div', {
+            key: 'score',
+            className: "text-lg text-yellow-300 mb-1 font-semibold"
+          }, `Score: ${winner.score} Points`),
+          React.createElement('div', {
+            key: 'breakdown',
+            className: "text-sm text-blue-300 mb-3"
+          }, `W:${winner.wildlife} • H:${winner.habitat} • N:${winner.nature}`)
+        ]),
 
-        {/* BOTTOM CELEBRATION - PROPERLY POSITIONED */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-center p-4">
-          <div className="bg-gradient-to-br from-green-800/70 via-blue-800/70 to-purple-800/70 backdrop-blur-xl rounded-2xl border-2 border-yellow-400/80 shadow-2xl p-4 text-center relative overflow-hidden w-full max-w-sm">
-            
-            {/* Glowing border effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-green-400/30 to-blue-400/30 rounded-2xl blur-lg"></div>
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setShowCelebration(false)}
-              className="absolute top-2 right-2 text-white hover:text-yellow-300 text-2xl z-30 bg-black/50 rounded-full w-8 h-8 flex items-center justify-center font-bold"
-            >
-              ×
-            </button>
+        // Forest Proclamation
+        React.createElement('div', {
+          key: 'forest',
+          className: "celebrate-slide-in mb-3",
+          style: { animationDelay: '0.5s' }
+        }, [
+          React.createElement('div', {
+            key: 'declares',
+            className: "text-lg text-green-300 mb-2 celebrate-float font-bold"
+          }, '🌲 THE FOREST DECLARES 🌲'),
+          React.createElement('div', {
+            key: 'master',
+            className: "text-sm text-white mb-3 font-semibold"
+          }, '"Master of the Wild Cascadia!"')
+        ]),
 
-            {/* Header */}
-            <div className="relative z-20 celebrate-slide-in mb-3">
-              <div className="text-4xl mb-2 celebrate-bounce">🏆</div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 bg-clip-text text-transparent mb-2 celebrate-pulse">
-                CASCADIA VICTORY!
-              </h1>
-              <div className="text-xl text-white mb-2 celebrate-wiggle font-bold">
-                🎉 {winner.name} WINS! 🎉
-              </div>
-              <div className="text-lg text-yellow-300 mb-1 font-semibold">
-                Score: {winner.score} Points
-              </div>
-              <div className="text-sm text-blue-300 mb-3">
-                W:{winner.wildlife} • H:{winner.habitat} • N:{winner.nature}
-              </div>
-            </div>
+        // Animals Grid
+        React.createElement('div', {
+          key: 'animals',
+          className: "grid grid-cols-5 gap-2 mb-3"
+        }, cascadiaAnimals.map((animal, index) => 
+          React.createElement('div', {
+            key: animal.name,
+            className: "text-center celebrate-slide-in",
+            style: { animationDelay: animal.delay }
+          }, [
+            React.createElement('div', {
+              key: 'emoji',
+              className: `text-3xl mb-1 ${index % 2 === 0 ? 'celebrate-bounce' : 'celebrate-wiggle'}`,
+              style: { animationDelay: animal.delay }
+            }, animal.emoji),
+            React.createElement('div', {
+              key: 'message',
+              className: "text-yellow-400 text-xs font-bold"
+            }, animal.message)
+          ])
+        )),
 
-            {/* Forest Proclamation */}
-            <div className="celebrate-slide-in mb-3" style={{ animationDelay: '0.5s' }}>
-              <div className="text-lg text-green-300 mb-2 celebrate-float font-bold">
-                🌲 THE FOREST DECLARES 🌲
-              </div>
-              <div className="text-sm text-white mb-3 font-semibold">
-                "Master of the Wild Cascadia!"
-              </div>
-            </div>
+        // Ecosystem Tribute
+        React.createElement('div', {
+          key: 'ecosystem',
+          className: "celebrate-slide-in mb-3",
+          style: { animationDelay: '1.5s' }
+        }, [
+          React.createElement('div', {
+            key: 'mountains',
+            className: "text-base text-purple-300 mb-2 celebrate-pulse font-bold"
+          }, '🗻 FROM MOUNTAINS TO SEAS 🌊'),
+          React.createElement('div', {
+            key: 'habitats',
+            className: "flex justify-center gap-3 text-2xl mb-3"
+          }, ['🏔️', '🌲', '🌾', '🌊', '🏞️'].map((emoji, i) => 
+            React.createElement('span', {
+              key: i,
+              className: i % 2 === 0 ? 'celebrate-bounce' : 'celebrate-wiggle',
+              style: { animationDelay: `${0.1 * (i + 1)}s` }
+            }, emoji)
+          ))
+        ]),
 
-            {/* Animals Grid */}
-            <div className="grid grid-cols-5 gap-2 mb-3">
-              {cascadiaAnimals.map((animal, index) => (
-                <div
-                  key={animal.name}
-                  className="text-center celebrate-slide-in"
-                  style={{ animationDelay: animal.delay }}
-                >
-                  <div 
-                    className={`text-3xl mb-1 ${
-                      index % 2 === 0 ? 'celebrate-bounce' : 'celebrate-wiggle'
-                    }`}
-                    style={{ animationDelay: animal.delay }}
-                  >
-                    {animal.emoji}
-                  </div>
-                  <div className="text-yellow-400 text-xs font-bold">{animal.message}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Ecosystem Tribute */}
-            <div className="celebrate-slide-in mb-3" style={{ animationDelay: '1.5s' }}>
-              <div className="text-base text-purple-300 mb-2 celebrate-pulse font-bold">
-                🗻 FROM MOUNTAINS TO SEAS 🌊
-              </div>
-              <div className="flex justify-center gap-3 text-2xl mb-3">
-                <span className="celebrate-bounce" style={{ animationDelay: '0.1s' }}>🏔️</span>
-                <span className="celebrate-wiggle" style={{ animationDelay: '0.2s' }}>🌲</span>
-                <span className="celebrate-bounce" style={{ animationDelay: '0.3s' }}>🌾</span>
-                <span className="celebrate-wiggle" style={{ animationDelay: '0.4s' }}>🌊</span>
-                <span className="celebrate-bounce" style={{ animationDelay: '0.5s' }}>🏞️</span>
-              </div>
-            </div>
-
-            {/* Grand Finale */}
-            <div className="celebrate-slide-in" style={{ animationDelay: '2s' }}>
-              <div className="flex justify-center gap-2 text-2xl mb-3">
-                {sparkleElements.map((sparkle, i) => (
-                  <span
-                    key={i}
-                    className="celebrate-sparkle"
-                    style={{ 
-                      animationDelay: `${i * 0.2}s`,
-                      animationDuration: '1.5s'
-                    }}
-                  >
-                    {sparkle}
-                  </span>
-                ))}
-              </div>
-              
-              {/* Champion Badge */}
-              <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black px-4 py-2 rounded-xl font-bold text-sm celebrate-pulse shadow-xl">
-                👑 CASCADIA CHAMPION 👑
-              </div>
-              
-              <div className="text-xs text-green-300 mt-2 font-semibold">
-                Forever remembered in the great forest! 🌲✨
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+        // Grand Finale
+        React.createElement('div', {
+          key: 'finale',
+          className: "celebrate-slide-in",
+          style: { animationDelay: '2s' }
+        }, [
+          React.createElement('div', {
+            key: 'sparkles',
+            className: "flex justify-center gap-2 text-2xl mb-3"
+          }, sparkleElements.map((sparkle, i) => 
+            React.createElement('span', {
+              key: i,
+              className: "celebrate-sparkle",
+              style: { 
+                animationDelay: `${i * 0.2}s`,
+                animationDuration: '1.5s'
+              }
+            }, sparkle)
+          )),
+          
+          React.createElement('div', {
+            key: 'badge',
+            className: "bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black px-4 py-2 rounded-xl font-bold text-sm celebrate-pulse shadow-xl"
+          }, '👑 CASCADIA CHAMPION 👑'),
+          
+          React.createElement('div', {
+            key: 'remember',
+            className: "text-xs text-green-300 mt-2 font-semibold"
+          }, 'Forever remembered in the great forest! 🌲✨')
+        ])
+      ]))
+    ]);
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-900 to-slate-800 text-white">
-      {/* Inject CSS to hide number input spinners */}
-      <style dangerouslySetInnerHTML={{ __html: hideSpinnersStyle }} />
-      
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="bg-gradient-to-br from-slate-800/90 to-green-800/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-green-500/20">
-          
-          {/* Header */}
-          <div className="text-center p-8 border-b border-green-500/20">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <Mountain className="text-green-400" size={32} />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                Cascadia FeZoRaHuNu Calculator
-              </h1>
-              <Trees className="text-green-400" size={32} />
-            </div>
-            <p className="text-green-300 text-lg">Epic Professional Score Calculator with Victory Ceremonies!</p>
-          </div>
+  return React.createElement('div', {
+    className: "min-h-screen bg-gradient-to-br from-slate-900 via-green-900 to-slate-800 text-white"
+  }, [
+    // Inject CSS
+    React.createElement('style', {
+      key: 'styles',
+      dangerouslySetInnerHTML: { __html: hideSpinnersStyle }
+    }),
+    
+    React.createElement('div', {
+      key: 'container',
+      className: "max-w-6xl mx-auto p-4"
+    }, [
+      React.createElement('div', {
+        key: 'main',
+        className: "bg-gradient-to-br from-slate-800/90 to-green-800/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-green-500/20"
+      }, [
+        // Header
+        React.createElement('div', {
+          key: 'header',
+          className: "text-center p-8 border-b border-green-500/20"
+        }, [
+          React.createElement('div', {
+            key: 'title-row',
+            className: "flex items-center justify-center gap-4 mb-4"
+          }, [
+            React.createElement(Mountain, {
+              key: 'mountain',
+              className: "text-green-400",
+              size: 32
+            }),
+            React.createElement('h1', {
+              key: 'title',
+              className: "text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent"
+            }, 'Cascadia FeZoRaHuNu Calculator'),
+            React.createElement(Trees, {
+              key: 'trees',
+              className: "text-green-400",
+              size: 32
+            })
+          ]),
+          React.createElement('p', {
+            key: 'subtitle',
+            className: "text-green-300 text-lg"
+          }, 'Epic Professional Score Calculator with Victory Ceremonies!')
+        ]),
 
-          {/* Game Setup */}
-          <div className="p-6 border-b border-green-500/20">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-green-300">Wildlife Cards Type</label>
-                <select 
-                  value={gameType} 
-                  onChange={(e) => setGameType(e.target.value)}
-                  className="w-full p-3 bg-slate-700/50 border border-green-500/30 rounded-lg text-white focus:ring-2 focus:ring-green-400 focus:border-transparent"
-                >
-                  <option value="A">Type A - Beginner Friendly</option>
-                  <option value="B">Type B - Intermediate</option>
-                  <option value="C">Type C - Advanced</option>
-                  <option value="D">Type D - Expert</option>
-                  <option value="Family">Family Variant</option>
-                  <option value="Intermediate">Intermediate Variant</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-green-300">Number of Players</label>
-                <select 
-                  value={playerCount} 
-                  onChange={(e) => setPlayerCount(parseInt(e.target.value))}
-                  className="w-full p-3 bg-slate-700/50 border border-green-500/30 rounded-lg text-white focus:ring-2 focus:ring-green-400 focus:border-transparent"
-                >
-                  <option value={1}>1 Player (Solo Mode)</option>
-                  <option value={2}>2 Players</option>
-                  <option value={3}>3 Players</option>
-                  <option value={4}>4 Players</option>
-                </select>
-              </div>
-            </div>
-          </div>
+        // Game Setup
+        React.createElement('div', {
+          key: 'game-setup',
+          className: "p-6 border-b border-green-500/20"
+        }, React.createElement('div', {
+          className: "grid grid-cols-1 md:grid-cols-2 gap-6"
+        }, [
+          React.createElement('div', {
+            key: 'game-type',
+            className: "space-y-2"
+          }, [
+            React.createElement('label', {
+              key: 'label',
+              className: "block text-sm font-medium text-green-300"
+            }, 'Wildlife Cards Type'),
+            React.createElement('select', {
+              key: 'select',
+              value: gameType,
+              onChange: (e) => setGameType(e.target.value),
+              className: "w-full p-3 bg-slate-700/50 border border-green-500/30 rounded-lg text-white focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            }, [
+              React.createElement('option', { key: 'A', value: 'A' }, 'Type A - Beginner Friendly'),
+              React.createElement('option', { key: 'B', value: 'B' }, 'Type B - Intermediate'),
+              React.createElement('option', { key: 'C', value: 'C' }, 'Type C - Advanced'),
+              React.createElement('option', { key: 'D', value: 'D' }, 'Type D - Expert'),
+              React.createElement('option', { key: 'Family', value: 'Family' }, 'Family Variant'),
+              React.createElement('option', { key: 'Intermediate', value: 'Intermediate' }, 'Intermediate Variant')
+            ])
+          ]),
+          React.createElement('div', {
+            key: 'player-count',
+            className: "space-y-2"
+          }, [
+            React.createElement('label', {
+              key: 'label',
+              className: "block text-sm font-medium text-green-300"
+            }, 'Number of Players'),
+            React.createElement('select', {
+              key: 'select',
+              value: playerCount,
+              onChange: (e) => setPlayerCount(parseInt(e.target.value)),
+              className: "w-full p-3 bg-slate-700/50 border border-green-500/30 rounded-lg text-white focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            }, [
+              React.createElement('option', { key: '1', value: 1 }, '1 Player (Solo Mode)'),
+              React.createElement('option', { key: '2', value: 2 }, '2 Players'),
+              React.createElement('option', { key: '3', value: 3 }, '3 Players'),
+              React.createElement('option', { key: '4', value: 4 }, '4 Players')
+            ])
+          ])
+        ])),
 
-          {/* Player Names */}
-          <div className="p-6 border-b border-green-500/20">
-            <h3 className="text-xl font-semibold mb-4 text-green-300">🎮 Player Setup</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {players.map((player, index) => (
-                <div key={index} className="space-y-2">
-                  <label className="block text-sm text-green-300">Player {index + 1}</label>
-                  <input
-                    type="text"
-                    value={player.name}
-                    onChange={(e) => updatePlayerName(index, e.target.value)}
-                    className="w-full p-3 bg-slate-700/50 border border-green-500/30 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-400 focus:border-transparent"
-                    placeholder={`Player ${index + 1}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+        // Player Names
+        React.createElement('div', {
+          key: 'player-names',
+          className: "p-6 border-b border-green-500/20"
+        }, [
+          React.createElement('h3', {
+            key: 'title',
+            className: "text-xl font-semibold mb-4 text-green-300"
+          }, '🎮 Player Setup'),
+          React.createElement('div', {
+            key: 'grid',
+            className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          }, players.map((player, index) => 
+            React.createElement('div', {
+              key: index,
+              className: "space-y-2"
+            }, [
+              React.createElement('label', {
+                key: 'label',
+                className: "block text-sm text-green-300"
+              }, `Player ${index + 1}`),
+              React.createElement('input', {
+                key: 'input',
+                type: "text",
+                value: player.name,
+                onChange: (e) => updatePlayerName(index, e.target.value),
+                className: "w-full p-3 bg-slate-700/50 border border-green-500/30 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-400 focus:border-transparent",
+                placeholder: `Player ${index + 1}`
+              })
+            ])
+          ))
+        ]),
 
-          {/* Scoring Sections */}
-          <div className="p-6 space-y-8">
-            
-            {/* Wildlife Scoring */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-amber-500/20 rounded-lg">
-                  <span className="text-2xl">🦌</span>
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-amber-400">Wildlife Scoring</h2>
-                  <p className="text-amber-300/80">Type {gameType} Wildlife Cards</p>
-                </div>
-              </div>
+        // Scoring Sections
+        React.createElement('div', {
+          key: 'scoring',
+          className: "p-6 space-y-8"
+        }, [
+          // Wildlife Scoring
+          React.createElement('div', {
+            key: 'wildlife',
+            className: "space-y-4"
+          }, [
+            React.createElement('div', {
+              key: 'wildlife-header',
+              className: "flex items-center gap-3 mb-6"
+            }, [
+              React.createElement('div', {
+                key: 'icon',
+                className: "p-2 bg-amber-500/20 rounded-lg"
+              }, React.createElement('span', {
+                className: "text-2xl"
+              }, '🦌')),
+              React.createElement('div', {
+                key: 'text'
+              }, [
+                React.createElement('h2', {
+                  key: 'title',
+                  className: "text-2xl font-bold text-amber-400"
+                }, 'Wildlife Scoring'),
+                React.createElement('p', {
+                  key: 'subtitle',
+                  className: "text-amber-300/80"
+                }, `Type ${gameType} Wildlife Cards`)
+              ])
+            ]),
 
-              <div className="grid gap-4">
-                {wildlifeAnimals.map((animal) => {
-                  const scoring = wildlifeScoring[animal.key][gameType] || wildlifeScoring[animal.key]['A'];
-                  return (
-                    <div key={animal.key} className="bg-slate-700/30 rounded-xl border border-amber-500/20">
-                      <div className="p-4">
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <span className="text-2xl">{animal.emoji}</span>
-                              <h3 className="text-lg font-semibold text-amber-300">{animal.name}</h3>
-                              <button
-                                onClick={() => toggleHelp(animal.key)}
-                                className="p-1 hover:bg-amber-500/20 rounded-full transition-colors"
-                              >
-                                <HelpCircle size={16} className="text-amber-400" />
-                              </button>
-                            </div>
-                            <p className="text-sm text-gray-300 mb-1">{scoring.description}</p>
-                          </div>
-                          <div className="flex gap-2 flex-wrap justify-center">
-                            {players.map((player, playerIndex) => (
-                              <div key={playerIndex} className="text-center min-w-0">
-                                <label className="block text-xs text-gray-400 mb-1 truncate">{player.name}</label>
-                                <div className="flex items-center gap-1">
-                                  <button
-                                    onClick={() => adjustScore(playerIndex, animal.key, -1)}
-                                    className="p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-amber-500/30 text-amber-400 flex-shrink-0"
-                                  >
-                                    <Minus size={14} />
-                                  </button>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    value={getScore(playerIndex, animal.key)}
-                                    onChange={(e) => updateScore(playerIndex, animal.key, e.target.value)}
-                                    className={`w-16 p-2 bg-slate-600/50 border rounded-lg text-center text-white focus:ring-2 focus:ring-amber-400 ${
-                                      isScoreUnusual(playerIndex, animal.key) ? 'border-red-500 bg-red-900/20' : 'border-amber-500/30'
-                                    }`}
-                                  />
-                                  <button
-                                    onClick={() => adjustScore(playerIndex, animal.key, 1)}
-                                    className="p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-amber-500/30 text-amber-400 flex-shrink-0"
-                                  >
-                                    <Plus size={14} />
-                                  </button>
-                                </div>
-                                {isScoreUnusual(playerIndex, animal.key) && (
-                                  <div className="text-xs text-red-400 mt-1">Unusually high!</div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        {/* Expandable Help */}
-                        {expandedHelp[animal.key] && (
-                          <div className="mt-4 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                            <div className="text-sm text-amber-300 mb-2">
-                              <strong>How to Score:</strong> {scoring.helper}
-                            </div>
-                            <div className="text-xs text-amber-400">
-                              <strong>Examples:</strong> {scoring.examples}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+            React.createElement('div', {
+              key: 'wildlife-grid',
+              className: "grid gap-4"
+            }, wildlifeAnimals.map((animal) => {
+              const scoring = wildlifeScoring[animal.key][gameType] || wildlifeScoring[animal.key]['A'];
+              return React.createElement('div', {
+                key: animal.key,
+                className: "bg-slate-700/30 rounded-xl border border-amber-500/20"
+              }, React.createElement('div', {
+                className: "p-4"
+              }, [
+                React.createElement('div', {
+                  key: 'animal-row',
+                  className: "flex flex-col lg:flex-row lg:items-center gap-4"
+                }, [
+                  React.createElement('div', {
+                    key: 'animal-info',
+                    className: "flex-1"
+                  }, [
+                    React.createElement('div', {
+                      key: 'animal-header',
+                      className: "flex items-center gap-3 mb-2"
+                    }, [
+                      React.createElement('span', {
+                        key: 'emoji',
+                        className: "text-2xl"
+                      }, animal.emoji),
+                      React.createElement('h3', {
+                        key: 'name',
+                        className: "text-lg font-semibold text-amber-300"
+                      }, animal.name),
+                      React.createElement('button', {
+                        key: 'help',
+                        onClick: () => toggleHelp(animal.key),
+                        className: "p-1 hover:bg-amber-500/20 rounded-full transition-colors"
+                      }, React.createElement(HelpCircle, {
+                        size: 16,
+                        className: "text-amber-400"
+                      }))
+                    ]),
+                    React.createElement('p', {
+                      key: 'description',
+                      className: "text-sm text-gray-300 mb-1"
+                    }, scoring.description)
+                  ]),
+                  React.createElement('div', {
+                    key: 'player-inputs',
+                    className: "flex gap-2 flex-wrap justify-center"
+                  }, players.map((player, playerIndex) => 
+                    React.createElement('div', {
+                      key: playerIndex,
+                      className: "text-center min-w-0"
+                    }, [
+                      React.createElement('label', {
+                        key: 'label',
+                        className: "block text-xs text-gray-400 mb-1 truncate"
+                      }, player.name),
+                      React.createElement('div', {
+                        key: 'controls',
+                        className: "flex items-center gap-1"
+                      }, [
+                        React.createElement('button', {
+                          key: 'minus',
+                          onClick: () => adjustScore(playerIndex, animal.key, -1),
+                          className: "p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-amber-500/30 text-amber-400 flex-shrink-0"
+                        }, React.createElement(Minus, { size: 14 })),
+                        React.createElement('input', {
+                          key: 'input',
+                          type: "number",
+                          min: "0",
+                          value: getScore(playerIndex, animal.key),
+                          onChange: (e) => updateScore(playerIndex, animal.key, e.target.value),
+                          className: `w-16 p-2 bg-slate-600/50 border rounded-lg text-center text-white focus:ring-2 focus:ring-amber-400 ${
+                            isScoreUnusual(playerIndex, animal.key) ? 'border-red-500 bg-red-900/20' : 'border-amber-500/30'
+                          }`
+                        }),
+                        React.createElement('button', {
+                          key: 'plus',
+                          onClick: () => adjustScore(playerIndex, animal.key, 1),
+                          className: "p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-amber-500/30 text-amber-400 flex-shrink-0"
+                        }, React.createElement(Plus, { size: 14 }))
+                      ]),
+                      isScoreUnusual(playerIndex, animal.key) && React.createElement('div', {
+                        key: 'warning',
+                        className: "text-xs text-red-400 mt-1"
+                      }, 'Unusually high!')
+                    ])
+                  ))
+                ]),
+                
+                // Expandable Help
+                expandedHelp[animal.key] && React.createElement('div', {
+                  key: 'help-expanded',
+                  className: "mt-4 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20"
+                }, [
+                  React.createElement('div', {
+                    key: 'helper',
+                    className: "text-sm text-amber-300 mb-2"
+                  }, [
+                    React.createElement('strong', null, 'How to Score: '),
+                    scoring.helper
+                  ]),
+                  React.createElement('div', {
+                    key: 'examples',
+                    className: "text-xs text-amber-400"
+                  }, [
+                    React.createElement('strong', null, 'Examples: '),
+                    scoring.examples
+                  ])
+                ])
+              ]))
+            })),
 
-              <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/30">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-amber-300">Wildlife Subtotal</span>
-                  <div className="flex gap-6">
-                    {players.map((player, index) => (
-                      <div key={index} className="text-center">
-                        <div className="text-sm text-gray-400">{player.name}</div>
-                        <div className="text-2xl font-bold text-amber-400">{calculateWildlifeTotal(index)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            React.createElement('div', {
+              key: 'wildlife-subtotal',
+              className: "bg-amber-500/10 rounded-xl p-4 border border-amber-500/30"
+            }, React.createElement('div', {
+              className: "flex justify-between items-center"
+            }, [
+              React.createElement('span', {
+                key: 'label',
+                className: "text-lg font-semibold text-amber-300"
+              }, 'Wildlife Subtotal'),
+              React.createElement('div', {
+                key: 'totals',
+                className: "flex gap-6"
+              }, players.map((player, index) => 
+                React.createElement('div', {
+                  key: index,
+                  className: "text-center"
+                }, [
+                  React.createElement('div', {
+                    key: 'name',
+                    className: "text-sm text-gray-400"
+                  }, player.name),
+                  React.createElement('div', {
+                    key: 'total',
+                    className: "text-2xl font-bold text-amber-400"
+                  }, calculateWildlifeTotal(index))
+                ])
+              ))
+            ]))
+          ]),
 
-            {/* Habitat Scoring */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Mountain className="text-green-400" size={24} />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-green-400">Habitat Scoring</h2>
-                  <p className="text-green-300/80">Corridor sizes & automatic majority bonuses</p>
-                </div>
-              </div>
+          // Habitat Scoring
+          React.createElement('div', {
+            key: 'habitat',
+            className: "space-y-4"
+          }, [
+            React.createElement('div', {
+              key: 'habitat-header',
+              className: "flex items-center gap-3 mb-6"
+            }, [
+              React.createElement('div', {
+                key: 'icon',
+                className: "p-2 bg-green-500/20 rounded-lg"
+              }, React.createElement(Mountain, {
+                className: "text-green-400",
+                size: 24
+              })),
+              React.createElement('div', {
+                key: 'text'
+              }, [
+                React.createElement('h2', {
+                  key: 'title',
+                  className: "text-2xl font-bold text-green-400"
+                }, 'Habitat Scoring'),
+                React.createElement('p', {
+                  key: 'subtitle',
+                  className: "text-green-300/80"
+                }, 'Corridor sizes & automatic majority bonuses')
+              ])
+            ]),
 
-              <div className="grid gap-4">
-                {habitats.map((habitat) => (
-                  <div key={habitat.key} className="bg-slate-700/30 rounded-xl p-4 border border-green-500/20">
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-2xl">{habitat.emoji}</span>
-                          <h3 className="text-lg font-semibold text-green-300">{habitat.name}</h3>
-                        </div>
-                        <p className="text-sm text-gray-300">Enter your largest contiguous corridor size</p>
-                        <p className="text-xs text-green-400">Majority bonuses calculated automatically</p>
-                      </div>
-                      <div className="flex gap-2 flex-wrap justify-center">
-                        {players.map((player, playerIndex) => (
-                          <div key={playerIndex} className="text-center min-w-0">
-                            <label className="block text-xs text-gray-400 mb-1 truncate">{player.name}</label>
-                            <div className="flex items-center gap-1">
-                              <button
-                                onClick={() => adjustScore(playerIndex, `${habitat.key}_corridor`, -1)}
-                                className="p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-green-500/30 text-green-400 flex-shrink-0"
-                              >
-                                <Minus size={14} />
-                              </button>
-                              <input
-                                type="number"
-                                min="0"
-                                value={getScore(playerIndex, `${habitat.key}_corridor`)}
-                                onChange={(e) => updateScore(playerIndex, `${habitat.key}_corridor`, e.target.value)}
-                                className="w-16 p-2 bg-slate-600/50 border border-green-500/30 rounded-lg text-center text-white focus:ring-2 focus:ring-green-400"
-                              />
-                              <button
-                                onClick={() => adjustScore(playerIndex, `${habitat.key}_corridor`, 1)}
-                                className="p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-green-500/30 text-green-400 flex-shrink-0"
-                              >
-                                <Plus size={14} />
-                              </button>
-                            </div>
-                            <div className="text-xs text-green-400 mt-1">
-                              +{calculateHabitatMajority(playerIndex, habitat.key)} bonus
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            React.createElement('div', {
+              key: 'habitat-grid',
+              className: "grid gap-4"
+            }, habitats.map((habitat) => 
+              React.createElement('div', {
+                key: habitat.key,
+                className: "bg-slate-700/30 rounded-xl p-4 border border-green-500/20"
+              }, React.createElement('div', {
+                className: "flex flex-col lg:flex-row lg:items-center gap-4"
+              }, [
+                React.createElement('div', {
+                  key: 'habitat-info',
+                  className: "flex-1"
+                }, [
+                  React.createElement('div', {
+                    key: 'habitat-header',
+                    className: "flex items-center gap-3 mb-2"
+                  }, [
+                    React.createElement('span', {
+                      key: 'emoji',
+                      className: "text-2xl"
+                    }, habitat.emoji),
+                    React.createElement('h3', {
+                      key: 'name',
+                      className: "text-lg font-semibold text-green-300"
+                    }, habitat.name)
+                  ]),
+                  React.createElement('p', {
+                    key: 'description',
+                    className: "text-sm text-gray-300"
+                  }, 'Enter your largest contiguous corridor size'),
+                  React.createElement('p', {
+                    key: 'note',
+                    className: "text-xs text-green-400"
+                  }, 'Majority bonuses calculated automatically')
+                ]),
+                React.createElement('div', {
+                  key: 'player-inputs',
+                  className: "flex gap-2 flex-wrap justify-center"
+                }, players.map((player, playerIndex) => 
+                  React.createElement('div', {
+                    key: playerIndex,
+                    className: "text-center min-w-0"
+                  }, [
+                    React.createElement('label', {
+                      key: 'label',
+                      className: "block text-xs text-gray-400 mb-1 truncate"
+                    }, player.name),
+                    React.createElement('div', {
+                      key: 'controls',
+                      className: "flex items-center gap-1"
+                    }, [
+                      React.createElement('button', {
+                        key: 'minus',
+                        onClick: () => adjustScore(playerIndex, `${habitat.key}_corridor`, -1),
+                        className: "p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-green-500/30 text-green-400 flex-shrink-0"
+                      }, React.createElement(Minus, { size: 14 })),
+                      React.createElement('input', {
+                        key: 'input',
+                        type: "number",
+                        min: "0",
+                        value: getScore(playerIndex, `${habitat.key}_corridor`),
+                        onChange: (e) => updateScore(playerIndex, `${habitat.key}_corridor`, e.target.value),
+                        className: "w-16 p-2 bg-slate-600/50 border border-green-500/30 rounded-lg text-center text-white focus:ring-2 focus:ring-green-400"
+                      }),
+                      React.createElement('button', {
+                        key: 'plus',
+                        onClick: () => adjustScore(playerIndex, `${habitat.key}_corridor`, 1),
+                        className: "p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-green-500/30 text-green-400 flex-shrink-0"
+                      }, React.createElement(Plus, { size: 14 }))
+                    ]),
+                    React.createElement('div', {
+                      key: 'bonus',
+                      className: "text-xs text-green-400 mt-1"
+                    }, `+${calculateHabitatMajority(playerIndex, habitat.key)} bonus`)
+                  ])
+                ))
+              ]))
+            )),
 
-              <div className="bg-green-500/10 rounded-xl p-4 border border-green-500/30">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-green-300">Habitat Subtotal</span>
-                  <div className="flex gap-6">
-                    {players.map((player, index) => (
-                      <div key={index} className="text-center">
-                        <div className="text-sm text-gray-400">{player.name}</div>
-                        <div className="text-2xl font-bold text-green-400">{calculateHabitatTotal(index)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            React.createElement('div', {
+              key: 'habitat-subtotal',
+              className: "bg-green-500/10 rounded-xl p-4 border border-green-500/30"
+            }, React.createElement('div', {
+              className: "flex justify-between items-center"
+            }, [
+              React.createElement('span', {
+                key: 'label',
+                className: "text-lg font-semibold text-green-300"
+              }, 'Habitat Subtotal'),
+              React.createElement('div', {
+                key: 'totals',
+                className: "flex gap-6"
+              }, players.map((player, index) => 
+                React.createElement('div', {
+                  key: index,
+                  className: "text-center"
+                }, [
+                  React.createElement('div', {
+                    key: 'name',
+                    className: "text-sm text-gray-400"
+                  }, player.name),
+                  React.createElement('div', {
+                    key: 'total',
+                    className: "text-2xl font-bold text-green-400"
+                  }, calculateHabitatTotal(index))
+                ])
+              ))
+            ]))
+          ]),
 
-            {/* Nature Tokens */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-yellow-500/20 rounded-lg">
-                  <span className="text-2xl">🌰</span>
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-yellow-400">Nature Tokens</h2>
-                  <p className="text-yellow-300/80">1 point each for unused Douglas Fir cones</p>
-                </div>
-              </div>
+          // Nature Tokens
+          React.createElement('div', {
+            key: 'nature',
+            className: "space-y-4"
+          }, [
+            React.createElement('div', {
+              key: 'nature-header',
+              className: "flex items-center gap-3 mb-6"
+            }, [
+              React.createElement('div', {
+                key: 'icon',
+                className: "p-2 bg-yellow-500/20 rounded-lg"
+              }, React.createElement('span', {
+                className: "text-2xl"
+              }, '🌰')),
+              React.createElement('div', {
+                key: 'text'
+              }, [
+                React.createElement('h2', {
+                  key: 'title',
+                  className: "text-2xl font-bold text-yellow-400"
+                }, 'Nature Tokens'),
+                React.createElement('p', {
+                  key: 'subtitle',
+                  className: "text-yellow-300/80"
+                }, '1 point each for unused Douglas Fir cones')
+              ])
+            ]),
 
-              <div className="bg-slate-700/30 rounded-xl p-4 border border-yellow-500/20">
-                <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-yellow-300 mb-2">🌰 Unused Nature Tokens</h3>
-                    <p className="text-sm text-gray-300">Count your remaining Douglas Fir cones</p>
-                  </div>
-                  <div className="flex gap-2 flex-wrap justify-center">
-                    {players.map((player, playerIndex) => (
-                      <div key={playerIndex} className="text-center min-w-0">
-                        <label className="block text-xs text-gray-400 mb-1 truncate">{player.name}</label>
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => adjustScore(playerIndex, 'nature_tokens', -1)}
-                            className="p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-yellow-500/30 text-yellow-400 flex-shrink-0"
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <input
-                            type="number"
-                            min="0"
-                            value={getScore(playerIndex, 'nature_tokens')}
-                            onChange={(e) => updateScore(playerIndex, 'nature_tokens', e.target.value)}
-                            className="w-16 p-2 bg-slate-600/50 border border-yellow-500/30 rounded-lg text-center text-white focus:ring-2 focus:ring-yellow-400"
-                          />
-                          <button
-                            onClick={() => adjustScore(playerIndex, 'nature_tokens', 1)}
-                            className="p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-yellow-500/30 text-yellow-400 flex-shrink-0"
-                          >
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            React.createElement('div', {
+              key: 'nature-input',
+              className: "bg-slate-700/30 rounded-xl p-4 border border-yellow-500/20"
+            }, React.createElement('div', {
+              className: "flex flex-col lg:flex-row lg:items-center gap-4"
+            }, [
+              React.createElement('div', {
+                key: 'nature-info',
+                className: "flex-1"
+              }, [
+                React.createElement('h3', {
+                  key: 'title',
+                  className: "text-lg font-semibold text-yellow-300 mb-2"
+                }, '🌰 Unused Nature Tokens'),
+                React.createElement('p', {
+                  key: 'description',
+                  className: "text-sm text-gray-300"
+                }, 'Count your remaining Douglas Fir cones')
+              ]),
+              React.createElement('div', {
+                key: 'player-inputs',
+                className: "flex gap-2 flex-wrap justify-center"
+              }, players.map((player, playerIndex) => 
+                React.createElement('div', {
+                  key: playerIndex,
+                  className: "text-center min-w-0"
+                }, [
+                  React.createElement('label', {
+                    key: 'label',
+                    className: "block text-xs text-gray-400 mb-1 truncate"
+                  }, player.name),
+                  React.createElement('div', {
+                    key: 'controls',
+                    className: "flex items-center gap-1"
+                  }, [
+                    React.createElement('button', {
+                      key: 'minus',
+                      onClick: () => adjustScore(playerIndex, 'nature_tokens', -1),
+                      className: "p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-yellow-500/30 text-yellow-400 flex-shrink-0"
+                    }, React.createElement(Minus, { size: 14 })),
+                    React.createElement('input', {
+                      key: 'input',
+                      type: "number",
+                      min: "0",
+                      value: getScore(playerIndex, 'nature_tokens'),
+                      onChange: (e) => updateScore(playerIndex, 'nature_tokens', e.target.value),
+                      className: "w-16 p-2 bg-slate-600/50 border border-yellow-500/30 rounded-lg text-center text-white focus:ring-2 focus:ring-yellow-400"
+                    }),
+                    React.createElement('button', {
+                      key: 'plus',
+                      onClick: () => adjustScore(playerIndex, 'nature_tokens', 1),
+                      className: "p-1 bg-slate-600/50 hover:bg-slate-600/70 rounded border border-yellow-500/30 text-yellow-400 flex-shrink-0"
+                    }, React.createElement(Plus, { size: 14 }))
+                  ])
+                ])
+              ))
+            ]))
+          ]),
 
-            {/* Final Results */}
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl p-6 border border-blue-500/30">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <Trophy className="text-blue-400" size={32} />
-                  <h2 className="text-3xl font-bold text-blue-400">Final Results</h2>
-                </div>
-                <button
-                  onClick={celebrateWinner}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg"
-                >
-                  🎉 Celebrate Winner! 🎉
-                </button>
-              </div>
+          // Final Results
+          React.createElement('div', {
+            key: 'results',
+            className: "bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl p-6 border border-blue-500/30"
+          }, [
+            React.createElement('div', {
+              key: 'results-header',
+              className: "flex items-center justify-between mb-6"
+            }, [
+              React.createElement('div', {
+                key: 'title-section',
+                className: "flex items-center gap-3"
+              }, [
+                React.createElement(Trophy, {
+                  key: 'trophy',
+                  className: "text-blue-400",
+                  size: 32
+                }),
+                React.createElement('h2', {
+                  key: 'title',
+                  className: "text-3xl font-bold text-blue-400"
+                }, 'Final Results')
+              ]),
+              React.createElement('button', {
+                key: 'celebrate',
+                onClick: celebrateWinner,
+                className: "flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg"
+              }, '🎉 Celebrate Winner! 🎉')
+            ]),
 
-              <div className="grid gap-4">
-                {getRanking().map((player, rank) => {
-                  const category = getScoreCategory(player.score, rank === 0);
-                  return (
-                    <div key={player.index} className={`p-4 rounded-xl border ${
-                      rank === 0 
-                        ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/50' 
-                        : 'bg-slate-700/30 border-slate-500/30'
-                    }`}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`text-2xl font-bold ${
-                            rank === 0 ? 'text-yellow-400' : 
-                            rank === 1 ? 'text-gray-300' : 
-                            rank === 2 ? 'text-orange-400' : 'text-gray-400'
-                          }`}>
-                            {rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}th`}
-                          </div>
-                          <div>
-                            <div className={`text-xl font-bold ${rank === 0 ? 'text-yellow-400' : 'text-white'}`}>
-                              {player.name}
-                            </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-400">
-                              <span>Nature: {player.nature}</span>
-                              <div className={`px-2 py-1 rounded-full text-xs ${category.bg} ${category.color}`}>
-                                {category.label}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className={`text-3xl font-bold ${rank === 0 ? 'text-yellow-400' : 'text-blue-400'}`}>
-                            {player.score}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            React.createElement('div', {
+              key: 'ranking',
+              className: "grid gap-4"
+            }, getRanking().map((player, rank) => {
+              const category = getScoreCategory(player.score, rank === 0);
+              return React.createElement('div', {
+                key: player.index,
+                className: `p-4 rounded-xl border ${
+                  rank === 0 
+                    ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/50' 
+                    : 'bg-slate-700/30 border-slate-500/30'
+                }`
+              }, React.createElement('div', {
+                className: "flex items-center justify-between"
+              }, [
+                React.createElement('div', {
+                  key: 'player-info',
+                  className: "flex items-center gap-4"
+                }, [
+                  React.createElement('div', {
+                    key: 'rank',
+                    className: `text-2xl font-bold ${
+                      rank === 0 ? 'text-yellow-400' : 
+                      rank === 1 ? 'text-gray-300' : 
+                      rank === 2 ? 'text-orange-400' : 'text-gray-400'
+                    }`
+                  }, rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}th`),
+                  React.createElement('div', {
+                    key: 'details'
+                  }, [
+                    React.createElement('div', {
+                      key: 'name',
+                      className: `text-xl font-bold ${rank === 0 ? 'text-yellow-400' : 'text-white'}`
+                    }, player.name),
+                    React.createElement('div', {
+                      key: 'info',
+                      className: "flex items-center gap-4 text-sm text-gray-400"
+                    }, [
+                      React.createElement('span', {
+                        key: 'nature'
+                      }, `Nature: ${player.nature}`),
+                      React.createElement('div', {
+                        key: 'category',
+                        className: `px-2 py-1 rounded-full text-xs ${category.bg} ${category.color}`
+                      }, category.label)
+                    ])
+                  ])
+                ]),
+                React.createElement('div', {
+                  key: 'score',
+                  className: "text-right"
+                }, React.createElement('div', {
+                  className: `text-3xl font-bold ${rank === 0 ? 'text-yellow-400' : 'text-blue-400'}`
+                }, player.score))
+              ]));
+            }))
+          ]),
 
-            {/* Reset Button */}
-            <div className="text-center">
-              <button
-                onClick={resetAllScores}
-                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-xl text-white font-semibold transition-all transform hover:scale-105 shadow-lg mx-auto"
-              >
-                <RotateCcw size={20} />
-                Reset All Scores
-              </button>
-            </div>
-          </div>
+          // Reset Button
+          React.createElement('div', {
+            key: 'reset',
+            className: "text-center"
+          }, React.createElement('button', {
+            onClick: resetAllScores,
+            className: "flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-xl text-white font-semibold transition-all transform hover:scale-105 shadow-lg mx-auto"
+          }, [
+            React.createElement(RotateCcw, {
+              key: 'icon',
+              size: 20
+            }),
+            'Reset All Scores'
+          ]))
+        ]),
 
-          {/* Celebration Modal */}
-          {showCelebration && <CelebrationModal />}
+        // Celebration Modal
+        showCelebration && React.createElement(CelebrationModal, { key: 'celebration' }),
 
-          {/* Footer */}
-          <div className="p-6 border-t border-green-500/20 text-center">
-            <p className="text-green-300 mb-2">🌲 Made with ❤️ for Fe, Zo, Ra, Hu & Nu 🦌</p>
-            <p className="text-gray-400 text-sm">Ultimate Cascadia Board Game Calculator | Auto-saves your progress</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+        // Footer
+        React.createElement('div', {
+          key: 'footer',
+          className: "p-6 border-t border-green-500/20 text-center"
+        }, [
+          React.createElement('p', {
+            key: 'made-with',
+            className: "text-green-300 mb-2"
+          }, '🌲 Made with ❤️ for Fe, Zo, Ra, Hu & Nu 🦌'),
+          React.createElement('p', {
+            key: 'description',
+            className: "text-gray-400 text-sm"
+          }, 'Ultimate Cascadia Board Game Calculator | Auto-saves your progress')
+        ])
+      ])
+    ])
+  ]);
 };
 
-export default CascadiaCalculator;
+// Render the app
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(CascadiaCalculator));
